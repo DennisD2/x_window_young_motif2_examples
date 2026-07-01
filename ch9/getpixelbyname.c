@@ -41,7 +41,7 @@ Pixel GetPixelByName ( Widget w, char *colorname )
     }
 }
                 
-main()
+int main()
 {
     printf("This isn't a complete program, just an example function\n");
 }

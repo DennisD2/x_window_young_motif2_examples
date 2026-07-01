@@ -74,7 +74,7 @@ void LoadRGB ( Widget w, Pixel *red, Pixel *green, Pixel *blue )
 }
                                     
 
-main()
+int main()
 {
     printf("This isn't a complete program, just an example function\n");
 }

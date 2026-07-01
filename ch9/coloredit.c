@@ -24,7 +24,7 @@
 
 extern Widget CreatePaletteEditor ( Widget parent, int ncolors );
 
-void main ( int argc, char **argv ) 
+int main ( int argc, char **argv )
 {
     XtAppContext app;
     Widget    shell, colorEditor;
