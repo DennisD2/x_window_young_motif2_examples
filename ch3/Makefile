@@ -1,4 +1,4 @@
-CC = cc 
+CC = gcc
 DEBUG = -O
 
 #if HP, use this one
@@ -11,7 +11,7 @@ CFLAGS = $(DEBUG)  -I../lib
 #if HP, use this
 #LIBS =   -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  
 #if sgi use
-LIBS =  -L../lib -lXs -lXm -lXt -lX11 -lPW
+LIBS =  -L../lib -lXs -lXm -lXt -lX11 #-lPW
 
 TARGETS= editor rmtest rmtest2 rmtest3 rmtest4
 

@@ -1,6 +1,12 @@
+vcs.xml
 *.o
 *.a
 /ch2/memo
 /ch2/memo2
 /ch2/xecute
-vcs.xml
+/ch3/editor
+/ch3/editor
+/ch3/rmtest
+/ch3/rmtest2
+/ch3/rmtest3
+/ch3/rmtest4

@@ -22,12 +22,12 @@
 #include <stdio.h>
 #include "dbg.h"
 
-unsigned char debugLevel;
+const unsigned char debugLevel;
 
-static XtResource resources[] = {
+static XtResource resources[] = {}; /* {
 { XmNdebugLevel, XmCDebugLevel, XmRDebugLevel, sizeof ( unsigned char ),
   ( Cardinal ) &debugLevel, XmRImmediate,  ( XtPointer )  LEVEL0 },
-};
+};*/
 
 static XrmOptionDescRec options[] = { 
   { "-debug",   "*debugLevel",   XrmoptionSepArg, NULL }
