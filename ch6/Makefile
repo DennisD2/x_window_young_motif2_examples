@@ -11,7 +11,7 @@ CFLAGS = $(DEBUG)  -I../lib
 #if HP, use this
 #LIBS =   -L../lib -lXs -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  
 #if sgi use
-LIBS =  -L../lib -lXs -lXm -lXt -lX11 -lPW
+LIBS =  -L../lib -lXs -lXm -lXt -lX11 #-lPW
 
 TARGETS= helpdemo menubar option option2 popupmenu cascade tearoff
 
