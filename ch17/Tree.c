@@ -144,7 +144,7 @@ XsTreeClassRec xsTreeClassRec = {
 },
 {
     /* Tree class fields */
-    NULL,                                   /* ignore                 */
+    (int)NULL,                                   /* ignore                 */
 }
 };
 
@@ -157,7 +157,7 @@ static void Initialize ( Widget req, Widget new_w,
     XsTreeWidget request = ( XsTreeWidget ) req;
  
    /*
-    * Make sure the widgetÕs width and height are 
+    * Make sure the widgetï¿½s width and height are 
     * greater than zero.
     */
  
@@ -203,7 +203,7 @@ static void ConstraintInitialize ( Widget request, Widget new_w,
  
    /*
     * If this widget has a supernode, add it to that 
-    * widgetÕs subnodes list. Otherwise make it a subnode of 
+    * widgetï¿½s subnodes list. Otherwise make it a subnode of 
     * the tree_root widget.
     */
  
@@ -224,7 +224,7 @@ static Boolean SetValues ( Widget new_w, Widget old, Widget widget,
  
    /*
     * If the minimum spacing has changed, recalculate the
-    * tree layout. NewLayout() does a redraw, so we donÕt
+    * tree layout. NewLayout() does a redraw, so we donï¿½t
     * need SetValues to do another one. The redraw flag is not
     * really needed for this simple function, but set it up
     * to allow for future expansion.
@@ -280,7 +280,7 @@ static Boolean ConstraintSetValues ( Widget current,
         * compute new layout.
         */
         
-        if ( XtIsRealized ( tw ) ) 
+        if ( XtIsRealized ( (Widget)tw ) )
            NewLayout ( tw );
     } 
  
@@ -337,7 +337,7 @@ static void DeleteNode ( Widget super_node, Widget node )
     super_const = TREE_CONSTRAINT ( super_node );
  
    /*
-    * Find the sub_node on its super_nodeÕs list.
+    * Find the sub_node on its super_nodeï¿½s list.
     */
  
     for ( pos = 0; pos < super_const->tree.n_sub_nodes; pos++ ) 
@@ -371,8 +371,8 @@ static void ConstraintDestroy ( Widget w )
     int i;
  
    /* 
-    * Remove the widget from its parentÕs sub-nodes list and
-    * make all this widgetÕs sub-nodes sub-nodes of the parent.
+    * Remove the widget from its parentï¿½s sub-nodes list and
+    * make all this widgetï¿½s sub-nodes sub-nodes of the parent.
     */
  
     if ( tree_const->tree.super_node ) 
@@ -445,7 +445,7 @@ static void Redisplay ( Widget w, XEvent *event, Region region )
     * If the Tree widget is visible, redraw all lines and gadgets.
     */
  
-    if ( XtIsRealized ( tw ) && tw->core.visible ) 
+    if ( XtIsRealized ( (Widget)tw ) && tw->core.visible )
     {
        /*
         * Redraw all gadgets.
@@ -460,7 +460,7 @@ static void Redisplay ( Widget w, XEvent *event, Region region )
          
            /*
             * Draw a line between the right edge of each widget
-            * and the left edge of each of its sub_nodes. DonÕt
+            * and the left edge of each of its sub_nodes. Donï¿½t
             * draw lines from the fake tree_root. Lines are drawn
             * "manhattan" style, so that all lines are either 
             * vertical or horizontal, like this:
@@ -586,7 +586,7 @@ static void NewLayout ( XsTreeWidget tw )
     *  Trigger a redisplay of the lines connecting nodes.
     */
  
-    if ( XtIsRealized ( tw ) ) 
+    if ( XtIsRealized ( (Widget)tw ) )
           XClearArea ( XtDisplay ( tw ), XtWindow ( tw ), 0, 0, 0, 0, TRUE );
 }
                     
@@ -730,7 +730,7 @@ static void SetPositions ( XsTreeWidget tw, Widget w, int level )
         XsTreeConstraints tree_const = TREE_CONSTRAINT ( w );
         
        /*
-        * Add up the sum of the widthÕs of all nodes to this 
+        * Add up the sum of the widthï¿½s of all nodes to this 
         * depth, and use it as the x position.
         */
         
@@ -740,11 +740,11 @@ static void SetPositions ( XsTreeWidget tw, Widget w, int level )
        /*
         * Move the widget into position.
         */
-        
+        // _XmMoveObject is gone in 2.1, use XmeConfigureObject(), but API differs - needs analysis
         _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
         
        /*
-        * If the widget position plus its width or height doesnÕt
+        * If the widget position plus its width or height doesnï¿½t
         * fit in the tree, ask if the tree can be resized.
         */
         
@@ -887,7 +887,7 @@ Widget XsCreateScrolledTree ( Widget parent, char *name,
  
    /*
     * Create an XmScrolledWindow widget, passing in all arguments.
-    * The widget will ignore any that donÕt apply.
+    * The widget will ignore any that donï¿½t apply.
     */
 
     sw = XtCreateManagedWidget ( sw_name, xmScrolledWindowWidgetClass,
