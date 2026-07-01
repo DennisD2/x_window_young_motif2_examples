@@ -1,4 +1,4 @@
-# Young examples
+# X Window example code from Douglas Young's book from 1994
 These directories contain the source to famous book "The X Window System:
 Programming and Applications with Xt, Second Motif Edition", by
 Douglas Young, Prentice Hall, 1994
