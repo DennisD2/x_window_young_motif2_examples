@@ -11,7 +11,7 @@ CFLAGS = $(DEBUG)
 #if HP, use this
 #LIBS =   -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  
 #if sgi use
-LIBS =  -lXm -lXt -lX11 -lPW
+LIBS =  -lXm -lXt -lX11 #-lPW
 
 TARGETS= explicit formtest formtest2 layout frame pane mainwindow radiobox rctest scale scroll traverse twoshells
 
