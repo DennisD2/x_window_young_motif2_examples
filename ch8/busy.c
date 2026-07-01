@@ -62,7 +62,7 @@ static void DoTask ( Widget w, XtPointer clientData, XtPointer callData )
             
 void DisplayBusyCursor ( Widget w ) 
 {
-    static cursor = NULL;
+    static Cursor cursor = (Cursor) NULL;
 
     if ( !cursor ) 
         cursor = XCreateFontCursor ( XtDisplay ( w ), XC_watch );  
