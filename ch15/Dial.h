@@ -34,7 +34,7 @@ typedef struct _XsDialRec      * XsDialWidget;
  */
 
 #define XmNmarkers        "markers"
-#define XmNposition       "position"
+//#define XmNposition       "position"
 #define XmNmarkerLength   "markerLength"
 
 #define XmCMarkers        "Markers"

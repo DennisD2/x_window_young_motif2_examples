@@ -1,4 +1,4 @@
-CC = cc 
+CC = gcc
 DEBUG = -O
 
 
@@ -12,7 +12,7 @@ CFLAGS = $(DEBUG)
 #if HP, use this
 #LIBS =  -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  -lm
 #if sgi use
-LIBS =  -lXm -lXt -lX11 -lPW -lm
+LIBS =  -lXm -lXt -lX11 -lm #-lPW -lm
 
 
 TARGETS= dialtest

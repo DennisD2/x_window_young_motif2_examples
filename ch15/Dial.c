@@ -207,7 +207,7 @@ WidgetClass xsDialWidgetClass = ( WidgetClass )  &xsDialClassRec;
                                     valueMask, &values ); 
 
    /*
-    * Call the widgetÕs resize method through the class
+    * Call the widgetï¿½s resize method through the class
     * pointer to force certain values to be computed. Use the
     * class pointer to allow any subclasses to override method.
     */
@@ -349,7 +349,7 @@ static void Redisplay ( Widget w, XEvent *event, Region region )
     XsDialWidget  dw = ( XsDialWidget )  w;
     XsDialWidgetClass wc = (XsDialWidgetClass) XtClass(w);
     
-    if ( dw->core.visible && XtIsRealized ( dw ) ) 
+    if ( dw->core.visible && XtIsRealized ( (Widget)dw ) )
     {
 	if( dw->primitive.highlighted )
 	    (*(wc->primitive_class.border_highlight))( w );
@@ -475,9 +475,9 @@ static Boolean SetValues ( Widget    cur,
     */
     
     if ( redraw_indicator && !redraw &&
-         XtIsRealized ( dw ) && dw->core.visible ) 
+         XtIsRealized ( (Widget)dw ) && dw->core.visible )
     {
-        XDrawLine ( XtDisplay ( dw ), XtWindow ( dw ),
+        XDrawLine ( XtDisplay ( dw ), XtWindow ( (Widget)dw ),
                     dw->dial.inverse_GC, 
                     current->dial.center_x + 
                                    current->dial.shadow_delta,
@@ -485,17 +485,17 @@ static Boolean SetValues ( Widget    cur,
                     current->dial.indicator_x +
                                    current->dial.shadow_delta, 
                     current->dial.indicator_y + 1 );    
-        XDrawLine ( XtDisplay ( dw ), XtWindow ( dw ),
+        XDrawLine ( XtDisplay ( dw ), XtWindow ( (Widget)dw ),
                     dw->dial.inverse_GC, 
                     current->dial.center_x, current->dial.center_y,
                     current->dial.indicator_x, 
                     current->dial.indicator_y );
         
-        XDrawLine ( XtDisplay ( dw ), XtWindow ( dw ),  
+        XDrawLine ( XtDisplay ( dw ), XtWindow ( (Widget)dw ),
                     dw->primitive.top_shadow_GC,  
                     dw->dial.center_x, dw->dial.center_y,
                     dw->dial.indicator_x, dw->dial.indicator_y );
-        XDrawLine ( XtDisplay ( dw ), XtWindow ( dw ),  
+        XDrawLine ( XtDisplay ( dw ), XtWindow ( (Widget)dw ),
                     dw->primitive.bottom_shadow_GC,  
                     dw->dial.center_x + dw->dial.shadow_delta, 
                     dw->dial.center_y + 1,
