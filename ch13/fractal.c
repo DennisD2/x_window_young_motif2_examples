@@ -25,7 +25,7 @@
 #include "MenuSupport.h"
 #include "fractal.h"
 
-extern ShowPreferences ( Widget parent, ImageData *data );
+extern void ShowPreferences ( Widget parent, ImageData *data );
 
 static void InitData ( Widget w, ImageData *data );
 
@@ -55,12 +55,12 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp );
 static MenuDescription appPaneDesc[] = {
   { BUTTON,   "Preferences", ShowPreferencesCallback },
   { BUTTON,   "Quit",        QuitCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription menuBarDesc[] = {
   { PULLDOWN,   "Application", NULL, NULL, appPaneDesc },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 void main ( int argc, char **argv ) 
@@ -156,12 +156,12 @@ static void InitData ( Widget w, ImageData *data )
     
      data->gc = XCreateGC ( XtDisplay ( w ),
                             DefaultRootWindow ( XtDisplay ( w ) ),
-                            NULL, NULL ); 
+                            ( unsigned long)NULL, NULL );
     /*
      *  Initialize the pixmap to NULL.
      */
     
-     data->pixmap = NULL;
+     data->pixmap = (Pixmap)NULL;
 
 }
                             
@@ -351,7 +351,7 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
     int          red, green, blue, i;
     Display     *dpy = XtDisplay ( shell );
     XColor      *Colors;
-    static Colormap  cmap = NULL;
+    static Colormap  cmap = (Colormap)NULL;
     Window      windows [ 2 ];    
     
    /*

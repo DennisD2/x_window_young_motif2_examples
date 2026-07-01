@@ -27,7 +27,8 @@
 #include "MenuSupport.h"
 #include "fractal.h"
 
-extern ShowPreferences ( Widget parent, ImageData *data );
+extern void ShowPreferences ( Widget parent, ImageData *data );
+extern void UpdatePreferences ( ImageData *data );
 
 static void InitData ( Widget w, ImageData *data );
 
@@ -57,12 +58,12 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp );
 static MenuDescription appPaneDesc[] = {
   { BUTTON,   "Preferences", ShowPreferencesCallback },
   { BUTTON,   "Quit",        QuitCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription menuBarDesc[] = {
   { PULLDOWN,   "Application", NULL, NULL, appPaneDesc },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static void StartRubberBand ( Widget    w,
@@ -189,7 +190,7 @@ static void InitData ( Widget w, ImageData *data )
     
      data->gc = XCreateGC ( XtDisplay ( w ),
                             DefaultRootWindow ( XtDisplay ( w ) ),
-                            NULL, NULL ); 
+                            (unsigned long)NULL, NULL );
    /*
     * Create a second GC set to XOR mode to use in the rubberbanding
     * functions that select a region into which to zoom.
@@ -205,7 +206,7 @@ static void InitData ( Widget w, ImageData *data )
      *  Initialize the pixmap to NULL.
      */
     
-     data->pixmap = NULL;
+     data->pixmap = (Pixmap)NULL;
 
 }
                             
@@ -500,7 +501,7 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
     int          red, green, blue, i;
     Display     *dpy = XtDisplay ( shell );
     XColor      *Colors;
-    static Colormap  cmap = NULL;
+    static Colormap  cmap = (Colormap)NULL;
     Window      windows [ 2 ];    
     
    /*
