@@ -4,6 +4,7 @@ Original README file: [README](README)
 ## Issues
 * ch17/Tree.c, changed API:
 ```c++
+/*
 * Move the widget into position.
 */
 // _XmMoveObject is gone in 2.1, use XmeConfigureObject(), but API differs - needs analysis
