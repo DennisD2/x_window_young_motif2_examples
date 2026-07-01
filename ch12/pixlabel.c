@@ -25,7 +25,7 @@
 #define MAX(a,b) (a>b ? a : b)
 #define PAD 2
 
-InstallLabeledPixmap ( Widget w, char **xpmDescription )
+void InstallLabeledPixmap ( Widget w, char **xpmDescription )
 {
     XmString       label;
     XmFontList     fontlist;
