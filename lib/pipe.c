@@ -20,6 +20,8 @@
  * pipe.c: connect input and out of two programs
  ************************************************************/
 #include         <stdio.h>
+#include         <unistd.h>
+#include         <stdlib.h>
 
 void SetUpTwoWayPipe ( const char *cmd ) 
 {

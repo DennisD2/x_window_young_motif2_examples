@@ -33,7 +33,7 @@ void ContextHelpCallback ( Widget    w,
     Widget       selectedWidget = NULL;
     char         *helpString;
     Widget        dialog;
-    static Cursor cursor = NULL;
+    static Cursor cursor = (Cursor)NULL;
     XEvent        event;
     Widget        parent = XtParent ( w ); /* In case w is a gadget */
     Widget        mainWindow = ( Widget ) clientData;

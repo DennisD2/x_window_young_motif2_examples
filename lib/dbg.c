@@ -19,6 +19,7 @@
  * dbg.c: An example Xt type converter
  *****************************************/
 #include "dbg.h"
+#include <strings.h>
 
 Boolean CvtStringToDebugLevel ( Display     *dpy,
 				XrmValue    *args,

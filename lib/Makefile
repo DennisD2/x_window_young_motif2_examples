@@ -1,6 +1,6 @@
 CC = gcc
 DEBUG = -O
-CFLAGS = $(DEBUG) -std=c17
+CFLAGS = $(DEBUG) #-std=c17
 
 OBJECTS = MenuSupport.o help.o pipe.o wprintf.o textFromXmString.o dbg.o
 TARGETS= libXs.a
@@ -13,4 +13,3 @@ libXs.a: $(OBJECTS)
 clobber:
 	rm -f *.o *~* *.a 
 	rm -f $(TARGETS)
-

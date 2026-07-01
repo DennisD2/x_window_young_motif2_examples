@@ -21,13 +21,13 @@
  *            in a label or button, providing the same
  *            syntax as printf()
  ****************************************************/
-#include <varargs.h>
+//#include <varargs.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <Xm/Xm.h>
 #include <Xm/Label.h>
 
-void wprintf ( va_alist ) 
-  va_dcl
+void wprintf (Widget firstArg, ... )
 {
     Widget    w;
     char     *format;
@@ -40,14 +40,14 @@ void wprintf ( va_alist )
      * Init the variable length args list.
      */
     
-    va_start ( args );
+    va_start ( args, firstArg );
     
     /*
      * Extract the destination widget.
      * Make sure it is a subclass of XmLabel.
      */
-    
-    w = va_arg ( args, Widget );
+    w = firstArg;
+    //w = va_arg ( args, Widget );
     
     if ( !XtIsSubclass ( w, xmLabelWidgetClass )  ) 
         XtError ( "wprintf ()  requires a Label Widget" );
