@@ -22,7 +22,7 @@
 #include <Xm/TextF.h>
 
 static char *password = NULL; /* Buffer for storing password */
-static int   index = 0;     /* Position of next character in buffer */
+static int   index1 = 0;     /* Position of next character in buffer */
 
 /* Function declarations */
 
@@ -94,11 +94,11 @@ static void TextModifiedCallback ( Widget    w,
     {
        /* Store the entered text in a buffer */
 
-        password = XtRealloc ( password, sizeof ( char ) * index + 2);
-        password [ index++ ] = cbs->text->ptr [ 0 ];
-        password [ index ] = '\0';
+        password = XtRealloc ( password, sizeof ( char ) * index1 + 2);
+        password [ index1++ ] = cbs->text->ptr [ 0 ];
+        password [ index1 ] = '\0';
     
-       /* Replace the typed character with an Õ*Õ character */
+       /* Replace the typed character with an ï¿½*ï¿½ character */
 
         cbs->text->ptr [ 0 ] = '*';
     }
