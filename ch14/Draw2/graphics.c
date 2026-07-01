@@ -279,7 +279,7 @@ void SetDrawingFunction ( int type )
     currentFunction = TypeToFunction ( type );
 }
         
-SetCurrentColor ( Pixel fg )
+void SetCurrentColor ( Pixel fg )
 {
     currentForeground = fg;
 }
@@ -382,7 +382,7 @@ static void AddObject (  GraphicsObject *object )
     displayList[nextSlot].foreground = object->foreground;
    /*
     * Get a GC for this color. Using XtGetGC() ensures that
-    * only as many GCÕs will be created as there are colors.
+    * only as many GCï¿½s will be created as there are colors.
     * Objects with the same color will share a GC.
     */
 
@@ -418,7 +418,7 @@ static void StoreObject()
     GraphicsObject object;
 
    /*
-    * DonÕt store zero-sized figures.
+    * Donï¿½t store zero-sized figures.
     */
     if ( startX == lastX && startY == lastY )
         return;
@@ -699,7 +699,7 @@ void SaveData()
     static Widget dialog = NULL;
         
    /*
-    * Create the dialog if it doesnÕt already exist. Install
+    * Create the dialog if it doesnï¿½t already exist. Install
     * callbacks for OK and Cancel actions.
     */
 
@@ -790,7 +790,7 @@ void LoadData()
     static Widget dialog = NULL;
     
    /*
-    * Create a file selection dialog if it doesnÕt already exist
+    * Create a file selection dialog if it doesnï¿½t already exist
     */
 
     if ( !dialog )

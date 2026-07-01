@@ -71,7 +71,7 @@ extern void SetDrawingFunction ( int type );
 extern void SetCurrentColor ( Pixel pixel );
 extern void LoadData ( void );
 extern void SaveData ( void );
-extern InitGraphics ( Widget w );
+extern void InitGraphics ( Widget w );
 
 /*
  * Descriptions of contents of the menu bar. See Chapter 6
@@ -87,7 +87,7 @@ static MenuDescription drawingCommandsDesc[] = {
                      SetFigureCallback, ( XtPointer ) FILLEDRECTANGLE },
   { TOGGLE,   "FilledCircle",
                         SetFigureCallback, ( XtPointer ) FILLEDCIRCLE },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription colorDesc[] = {
@@ -98,7 +98,7 @@ static MenuDescription colorDesc[] = {
   { TOGGLE,   "Blue",    SetColorCallback },
   { TOGGLE,   "Magenta", SetColorCallback },
   { TOGGLE,   "Cyan",    SetColorCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription filePaneDesc[] = {
@@ -106,19 +106,19 @@ static MenuDescription filePaneDesc[] = {
   { BUTTON,   "Load",            LoadCallback },
   { SEPARATOR                                 },
   { BUTTON,   "Quit",            QuitCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
  static MenuDescription editPaneDesc[] = {
   { BUTTON,   "Copy",   CopyCallback  },
   { BUTTON,   "Cut",    CutCallback   },
   { BUTTON,   "Paste",  PasteCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
  
 static MenuDescription helpPaneDesc[] = {
   { BUTTON,   "HelpOnContext",   ContextHelpCallback },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription menuBarDesc[] = {
@@ -128,7 +128,7 @@ static MenuDescription menuBarDesc[] = {
   { RADIOPULLDOWN,   "DrawingCommands",
                                NULL, NULL, drawingCommandsDesc    },
   { HELPPANE,        "Help",   NULL, NULL, helpPaneDesc   },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
                     
 Widget CreateDrawingEditor ( Widget parent )
