@@ -71,20 +71,20 @@ static void OwnSelection ( Widget    w,
  static MenuDescription selectionPaneDesc[] = {
   { BUTTON,   "OwnSelection",       OwnSelection     },
   { BUTTON,   "RequestSelection",   RequestSelection },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription typePaneDesc[] = {
   { TOGGLE,   "String",           SetStringType },
   { TOGGLE,   "CompoundString",   SetCTType     },
   { TOGGLE,   "Targets",          SetTargetType },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
 
 static MenuDescription menuBarDesc[] = {
   { PULLDOWN,        "Selection",   NULL, NULL, selectionPaneDesc },
   { RADIOPULLDOWN,   "Type",        NULL, NULL, typePaneDesc },
-  { NULL }
+  { (enum _menu_type)NULL }
 };
         
 void main ( int argc, char **argv )

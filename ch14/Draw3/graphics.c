@@ -64,8 +64,8 @@ static unsigned char line_bits[] = {
    0xc0, 0x00, 0x80, 0x01, 0x00, 0x03, 0x00, 0x06, 0x00, 0x0c, 0x00, 0x18,
   0x00, 0x30, 0x00, 0x60, 0x00, 0xc0, 0x00, 0x80};
 
-Atom   GRAPHICS_OBJECT = NULL;
-Atom   TARGETS         = NULL;
+Atom   GRAPHICS_OBJECT = (Atom)NULL;
+Atom   TARGETS         = (Atom)NULL;
 Widget dragIcon;
 Pixmap dragBitmap;
 
@@ -734,7 +734,7 @@ void SetDrawingFunction ( int type )
     currentFunction = TypeToFunction ( type );
 }
         
-SetCurrentColor ( Pixel fg )
+void SetCurrentColor ( Pixel fg )
 {
     currentForeground = fg;
 }
@@ -837,7 +837,7 @@ static void AddObject (  GraphicsObject *object )
     displayList[nextSlot].foreground = object->foreground;
    /*
     * Get a GC for this color. Using XtGetGC() ensures that
-    * only as many GCÕs will be created as there are colors.
+    * only as many GCï¿½s will be created as there are colors.
     * Objects with the same color will share a GC.
     */
 
@@ -873,7 +873,7 @@ static void StoreObject()
     GraphicsObject object;
 
    /*
-    * DonÕt store zero-sized figures.
+    * Donï¿½t store zero-sized figures.
     */
     if ( startX == lastX && startY == lastY )
         return;
@@ -1154,7 +1154,7 @@ void SaveData()
     static Widget dialog = NULL;
         
    /*
-    * Create the dialog if it doesnÕt already exist. Install
+    * Create the dialog if it doesnï¿½t already exist. Install
     * callbacks for OK and Cancel actions.
     */
 
@@ -1245,7 +1245,7 @@ void LoadData()
     static Widget dialog = NULL;
     
    /*
-    * Create a file selection dialog if it doesnÕt already exist
+    * Create a file selection dialog if it doesnï¿½t already exist
     */
 
     if ( !dialog )

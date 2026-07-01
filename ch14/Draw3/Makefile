@@ -1,8 +1,9 @@
 CC = cc 
 DEBUG = -g
-CFLAGS = $(DEBUG) -DSYSV -I../../lib -fullwarn
+#CFLAGS = $(DEBUG) -DSYSV -I../../lib -fullwarn
+CFLAGS = $(DEBUG) -I../../lib
 
-LIBS =  -L../../lib -lXs -lXm -lXt -lX11 -lPW
+LIBS =  -L../../lib -lXs -lXm -lXt -lX11 #-lPW
 
 TARGETS= draw
 

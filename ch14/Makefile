@@ -1,4 +1,4 @@
-CC = cc 
+CC = gcc
 DEBUG = -O
 #if HP, use this one
 #CFLAGS = $(DEBUG) -I/usr/include/Motif1.2  -I../lib 
@@ -10,7 +10,7 @@ CFLAGS = $(DEBUG)  -I../lib
 #if HP, use this
 #LIBS =   -L../lib -lXs -L/usr/lib/Motif1.2 -L/usr/lib/X11R5 -lXpm -lXm -lXt -lX11 -lPW  
 #if sgi use
-LIBS =  -L../lib -lXs -lXpm -lXm -lXt -lX11 -lPW 
+LIBS =  -L../lib -lXs -lXpm -lXm -lXt -lX11 #-lPW
 
 
 TARGETS=selectiondemo setupicon setupicon2
