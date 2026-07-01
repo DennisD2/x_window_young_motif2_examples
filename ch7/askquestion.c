@@ -22,6 +22,7 @@
 #include <Xm/Xm.h>
 #include <Xm/PushB.h>
 #include <Xm/MessageB.h>
+#include <stdlib.h>
 
 static void YesCallback ( Widget    w,
                           XtPointer clientData, 
