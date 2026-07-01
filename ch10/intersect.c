@@ -21,7 +21,7 @@
  ***********************************************************/
 #include <X11/Xlib.h>
 #include <X11/Xutil.h> /* Contains Region declarations */
-
+#include <stdio.h>
 
 int DoesIntersect ( Region region1, Region region2 )
 {
@@ -55,7 +55,7 @@ int DoesIntersect ( Region region1, Region region2 )
    return ( !is_empty );
 }
 
-main()
+int main()
 {
     printf("Not a complete program. Just a function\n");
 }
