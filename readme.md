@@ -20,7 +20,7 @@ None
 // _XmMoveObject is gone in 2.1, use XmeConfigureObject(), but API differs - needs analysis
 _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
 ```
-
+ 
 
 ## Issue _XmMoveObject() function removed in Motif 2.x
 Info on _Xm..() and Xme...() functions from https://linux.die.net/man/3/lesstifinternals:
