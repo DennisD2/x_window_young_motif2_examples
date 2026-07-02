@@ -34,6 +34,7 @@ also documented. As many people use these functions in their code (especially wi
 ```
 
 For XmeConfigureObject() details, see here: https://archive.opengroup.org/openmotif/docs/m216.pdf
+
 I think line:
 ```c++
 _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
