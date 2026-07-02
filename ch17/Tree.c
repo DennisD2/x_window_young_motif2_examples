@@ -741,7 +741,12 @@ static void SetPositions ( XsTreeWidget tw, Widget w, int level )
         * Move the widget into position.
         */
         // _XmMoveObject is gone in 2.1, use XmeConfigureObject(), but API differs - needs analysis
-        _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
+        //_XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
+        XtWidgetGeometry preferred;
+        XtQueryGeometry ( w, NULL, &preferred );
+
+        XmeConfigureObject(w, tree_const->tree.x, tree_const->tree.y,
+               XtWidth(w), XtHeight(w), preferred.border_width );
         
        /*
         * If the widget position plus its width or height doesn�t
