@@ -41,7 +41,6 @@ _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
 ```
 
 can be replaced with:
-I think line:
 ```c++
 XtWidgetGeometry preferred;
 XtQueryGeometry ( w, NULL, &preferred );
