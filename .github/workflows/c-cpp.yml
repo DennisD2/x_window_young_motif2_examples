@@ -7,6 +7,16 @@ on:
     branches: [ "master" ]
 
 jobs:
+  opensuse-test:
+    runs-on: ubuntu-latest  
+    container:
+      image: opensuse/leap
+    steps:
+      - name: prepare system
+        run: |
+          cat /etc/os-release
+          zypper refresh
+          zypper install -y git
   build:
 
     runs-on: ubuntu-latest
