@@ -17,6 +17,8 @@ jobs:
           cat /etc/os-release
           zypper refresh
           zypper install -y git
+          zypper install -y libXt6 libXt-devel
+          
   build:
 
     runs-on: ubuntu-latest
