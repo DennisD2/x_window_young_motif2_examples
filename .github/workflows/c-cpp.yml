@@ -17,7 +17,7 @@ jobs:
           cat /etc/os-release
           zypper refresh
           zypper install -y git
-          zypper install -y libXt6 libXt-devel libXm4 motif-devel libX11 libX11-devel
+          zypper install -y libXt6 libXt-devel libXm4 motif-devel libX11-6 libX11-devel
           
   build:
 
