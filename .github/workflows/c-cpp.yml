@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v6
     - name: make
       run: pwd; echo "--.--"; ls; echo "--..--"; ls ..; echo "--Makefile--";cat Makefile; echo "----"; make all
 
