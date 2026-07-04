@@ -13,5 +13,5 @@ jobs:
 
     steps:
     - name: make
-      run: pwd; ls; cat Makefile; make all
+      run: pwd; echo "--.--"; ls; echo "--..--"; ls ..; echo "--Makefile--";cat Makefile; echo "----"; make all
 
