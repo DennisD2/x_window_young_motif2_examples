@@ -18,7 +18,7 @@ jobs:
           cat /etc/os-release
           zypper refresh
           zypper install -y git gcc make
-          zypper install -y libXt6 libXt-devel libXm4 motif-devel libX11-6 libX11-devel
+          zypper install -y libXt6 libXt-devel libXm4 motif-devel libX11-6 libX11-devel libXmp4 libXpm-devel
         
       - name: code checkout 
         uses: actions/checkout@v6
