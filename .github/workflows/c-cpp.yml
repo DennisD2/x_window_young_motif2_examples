@@ -13,5 +13,5 @@ jobs:
 
     steps:
     - name: make
-      run: pwd; make all
+      run: pwd; ls; cat Makefile; make all
 
