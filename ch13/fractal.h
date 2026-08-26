@@ -40,5 +40,9 @@ typedef struct {
     double         range, maxDistance;
     ComplexNumber  origin;
     ColorationType coloration;
+
+    Colormap        cmap;
+    XColor          *Colors;
+
 } ImageData;
 
