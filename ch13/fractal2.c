@@ -20,7 +20,7 @@
  *            fractal program that allows the user to select
  *            a region for closer viewing using rubberbanding
  ******************************************************************/
-#include <Xm/Xm.h> 
+#include <Xm/Xm.h>
 #include <Xm/DrawingA.h> 
 #include <Xm/MainW.h> 
 #include <stdlib.h>
@@ -179,7 +179,7 @@ static void InitData ( Widget w, ImageData *data )
      data->range       = 2.0;
      data->maxDistance = 4.0;
      data->coloration  = ITERATIONS;
-    data->cmap = (Colormap)NULL;
+     data->cmap = (Colormap)NULL;
 
     /*
      * Find out how many colors we have to work with, and  
@@ -512,8 +512,10 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
 {
     int          red, green, blue, i;
     Display     *dpy = XtDisplay ( shell );
+    int screen = DefaultScreen(dpy);
     Window      windows [ 2 ];
-    
+    XVisualInfo vinfo;
+
    /*
     * The first time, create a colormap and install it in the
     * canvas widget's window. Also set up the window manager
@@ -521,9 +523,33 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
     * if the system is capable of handling multiple colormaps.
     */
     
-    if ( !data->cmap )
-    {
-        data->cmap = DefaultColormap(dpy, DefaultScreen(dpy));
+    if ( !data->cmap ) {
+
+        Boolean visualFound=false;
+        // try to find a TrueColor visual
+        if (XMatchVisualInfo(dpy, screen, 32, TrueColor, &vinfo)) {
+            printf("TrueColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
+            visualFound=true;
+        }
+        if (!visualFound) {
+            if (XMatchVisualInfo(dpy, screen, 8, PseudoColor, &vinfo)) {
+                printf("PseudoColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
+                visualFound=true;
+            } else if (!visualFound) {
+                printf("Neither TrueColor nor PseudoColor visual found. Nutze Standard-Visual.\n");
+                vinfo.visual = DefaultVisual(dpy, screen);
+                vinfo.depth = DefaultDepth(dpy, screen);
+            }
+        }
+
+        if (vinfo.depth == 32) {
+            data->cmap = DefaultColormap(dpy, DefaultScreen(dpy));
+        }
+        if (vinfo.depth == 8) {
+            data->cmap = XCreateColormap ( dpy, XtWindow(data->canvas),
+                            DefaultVisual(dpy, DefaultScreen(dpy)),
+                            AllocAll );
+        }
 
         XSetWindowColormap ( dpy, XtWindow ( data->canvas ), data->cmap );
         windows[0] = XtWindow ( shell );
@@ -531,10 +557,7 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
         XSetWMColormapWindows ( dpy, XtWindow ( shell ), windows, 2 ); 
     }
 
-    if ( ramp )
-    {
-        printf("ramp not supported\n");
-        exit(0);
+    if ( vinfo.depth == 8 && ramp ) {
        /*
         * If a ramp is to be set up, allocate enough colors
         * cells. Then fill in the cells with some computed colors.
@@ -549,17 +572,13 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
         data->Colors[0].red   = data->Colors[0].blue = data->Colors[0].green = BlackPixel(dpy, 0);
         green = 65535;
         
-        for ( i = 1; i < data->ncolors; i++ )
-        {
-            // Generiere einen schönen Farbverlauf (Beispiel: Regenbogen oder Abstufung)
-            // X11 erwartet Werte von 0 bis 65535 (16-Bit) pro Farbkanal!
-            data->Colors[i].red   = (i * 65535) / data->ncolors;          // Rot-Verlauf
-            data->Colors[i].green = ((data->ncolors - i) * 65535) / data->ncolors; // Grün-Verlauf
-            data->Colors[i].blue  = (i * 32767) / data->ncolors;          // Blau-Verlauf
-            data->Colors[i].flags = DoRed | DoGreen | DoBlue;
-
-            // TrueColor-Zuweisung: Das System wandelt RGB in den echten Pixel-Wert um
-            XAllocColor(dpy, data->cmap, &data->Colors[i]);
+        for ( i = 1; i < data->ncolors; i++ ) {
+            data->Colors[i].pixel = i;
+            data->Colors[i].flags = DoRed|DoGreen|DoBlue;
+            data->Colors[i].red   = 65535;
+            data->Colors[i].blue  = 0;
+            data->Colors[i].green = green ;
+            green          -= green / 8;
         }
 
        /*
@@ -567,7 +586,8 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
         */
 
         XStoreColors ( dpy, data->cmap, data->Colors, data->ncolors );
-        
+
+        XtFree ( (char *) data->Colors );
     }
     else
     {
@@ -583,26 +603,28 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
                                         data->ncolors );
         def = DefaultColormap ( dpy, DefaultScreen ( dpy ) );
 
-        for ( i = 0; i < data->ncolors; i++ )
-        {
-            // Generiere einen schönen Farbverlauf (Beispiel: Regenbogen oder Abstufung)
-            // X11 erwartet Werte von 0 bis 65535 (16-Bit) pro Farbkanal!
-            data->Colors[i].red   = (i * 65535) / data->ncolors;          // Rot-Verlauf
-            data->Colors[i].green = ((data->ncolors - i) * 65535) / data->ncolors; // Grün-Verlauf
-            data->Colors[i].blue  = (i * 32767) / data->ncolors;          // Blau-Verlauf
-            data->Colors[i].flags = DoRed | DoGreen | DoBlue;
+        if (vinfo.depth == 32) {
+            for ( i = 0; i < data->ncolors; i++ ) {
+                // Generate good colors
+                // X11 expects color values 0..65535 (16-Bit) per color channel
+                data->Colors[i].red   = (i * 65535) / data->ncolors;
+                data->Colors[i].green = ((data->ncolors - i) * 65535) / data->ncolors;
+                data->Colors[i].blue  = (i * 32767) / data->ncolors;
+                data->Colors[i].flags = DoRed | DoGreen | DoBlue;
 
-            // TrueColor-Zuweisung: Das System wandelt RGB in den echten Pixel-Wert um
-            XAllocColor(dpy, data->cmap, &data->Colors[i]);
+                XAllocColor(dpy, data->cmap, &data->Colors[i]);
+            }
         }
+        if (vinfo.depth == 8) {
+            for ( i = 0; i < data->ncolors; i++ ) {
+                data->Colors[i].pixel = i;
+                data->Colors[i].flags = DoRed|DoGreen|DoBlue;
+            }
+            XQueryColors ( dpy, def, data->Colors, data->ncolors );
 
-        XQueryColors ( dpy, def, data->Colors, data->ncolors );
-        
-        for (int i = 0; i < data->ncolors; i++) {
-            // XAllocColor fragt den X-Server nach dem passenden TrueColor-Pixelwert
-            // für die in colors[i].red, .green, .blue definierten RGB-Werte.
-            // Der korrekte TrueColor-Wert wird vom System direkt in colors[i].pixel geschrieben.
-            XAllocColor(dpy, data->cmap, &data->Colors[i]);
+            XStoreColors ( dpy, data->cmap, data->Colors, data->ncolors );
+
+            XtFree ( ( char * ) data->Colors );
         }
     }
 }
