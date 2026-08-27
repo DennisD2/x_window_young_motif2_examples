@@ -28,11 +28,13 @@
 #include <Xm/Label.h>
 #include <Xm/MessageB.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Widgets globally available within this file. */
 
 static Widget  swatch, currentToggle = NULL; 
 static Widget  redSlider, blueSlider, greenSlider;
+int visualDepth=0;
 
 /* Function declarations and callbacks */
 
@@ -55,10 +57,38 @@ static void    SelectColorCallback ( Widget    w,
                                      XtPointer callData );
 static void    WarnUserNoColor ( Widget parent );
 static void    SetShadowColors ( Widget parent );
+
+
+void getVisual(Widget w) {
+    Display     *dpy = XtDisplay ( w );
+    int screen = DefaultScreen(dpy);
+    XVisualInfo vinfo;
+    Boolean visualFound=0;
+
+    // try to find a TrueColor visual
+    if (XMatchVisualInfo(dpy, screen, 32, TrueColor, &vinfo)) {
+        printf("TrueColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
+        visualFound=1;
+    }
+    if (!visualFound) {
+        if (XMatchVisualInfo(dpy, screen, 8, PseudoColor, &vinfo)) {
+            printf("PseudoColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
+            visualFound=1;
+        } else if (!visualFound) {
+            printf("Neither TrueColor nor PseudoColor visual found. Nutze Standard-Visual.\n");
+            vinfo.visual = DefaultVisual(dpy, screen);
+            vinfo.depth = DefaultDepth(dpy, screen);
+        }
+    }
+    visualDepth=vinfo.depth ;
+    printf("visual depth value: %d\n", visualDepth);
+}
                     
 Widget CreatePaletteEditor ( Widget parent, int ncolors ) 
 {
     Widget form, colors, controls, separator;
+
+    getVisual(parent);
 
    /* 
     * Create a base to hold everything.
@@ -207,12 +237,13 @@ static Widget CreateColorSelector ( Widget parent, int ncolors )
 
     pixels = ( Pixel* ) XtMalloc ( sizeof ( Pixel ) * ncolors * 3 );
 
-    if ( !XAllocColorCells ( XtDisplay ( parent ),
-                     DefaultColormapOfScreen ( XtScreen ( parent ) ),
-                             FALSE, NULL, 0,
-                             pixels, ncolors * 3 ) ) 
-        XtError ( "Can't allocate color cells" );
-
+    if (visualDepth == 8) {
+        if ( !XAllocColorCells ( XtDisplay ( parent ),
+                         DefaultColormapOfScreen ( XtScreen ( parent ) ),
+                                 FALSE, NULL, 0,
+                                 pixels, ncolors * 3 ) )
+            XtError ( "Can't allocate color cells" );
+    }
    /*
     * Put everything inside a labeled frame widget 
     */
@@ -251,23 +282,41 @@ static Widget CreateColorSelector ( Widget parent, int ncolors )
 
         sprintf ( name,"%d", pixels[i] );
 
-        toggle   = 
-            XtVaCreateManagedWidget ( name, 
-                                  xmToggleButtonWidgetClass, panel, 
-                                  XmNbackground, pixels[i],
-                                  XmNtopShadowColor, 
-                                             pixels[i + ncolors],
-                                  XmNbottomShadowColor, 
-                                             pixels[i + 2 * ncolors],
-                                  NULL );
-       /*
-        * Initialize the shadows of each button. The background is
-        * random, but at least the shadows should look right.
-        */
+        if (visualDepth == 8) {
+            toggle   =
+                XtVaCreateManagedWidget ( name,
+                                      xmToggleButtonWidgetClass, panel,
+                                      XmNbackground, pixels[i],
+                                      XmNtopShadowColor,
+                                                 pixels[i + ncolors],
+                                      XmNbottomShadowColor,
+                                                 pixels[i + 2 * ncolors],
+                                      NULL );
+            /*
+             * Initialize the shadows of each button. The background is
+             * random, but at least the shadows should look right.
+             */
+            SetShadowColors ( toggle );
+        }
+        if (visualDepth == 32) {
+            int r = random() % 256;
+            int g = random() % 256;
+            int b = random() % 256;
+            Pixel pixel = (r << 16) | (g << 8) | b;
+            printf("r=%d g=%d b=%d\n",r,g,b);
+            toggle   =
+                XtVaCreateManagedWidget ( name,
+                                      xmToggleButtonWidgetClass, panel,
+                                      XmNbackground, pixel,
+                                      /*XmNtopShadowColor,
+                                                 pixel,
+                                      XmNbottomShadowColor,
+                                                 pixel,*/
+                                      NULL );
+            XmChangeColor(toggle, pixel);
+        }
 
-        SetShadowColors ( toggle );
-
-       /*
+        /*
         * Callback to set the currently editable color cell.
         */
 
@@ -336,8 +385,22 @@ static void SelectColorCallback ( Widget    w,
     XtVaSetValues ( greenSlider, XmNvalue, color.green / 256,   NULL );
     XtVaSetValues ( blueSlider,  XmNvalue, color.blue  / 256,   NULL );
 }
-                                    
-static void RedSliderMoved ( Widget    w, 
+
+static void alignColors(void) {
+    Pixel bg, tsc, bsc;
+    XtVaGetValues ( swatch,
+                    XmNbackground,        &bg,
+                    XmNtopShadowColor,    &tsc,
+                    XmNbottomShadowColor, &bsc,
+                    NULL );
+    XtVaSetValues ( currentToggle,
+                    XmNbackground,        bg,
+                    XmNtopShadowColor,    tsc,
+                    XmNbottomShadowColor, bsc,
+                    NULL );
+}
+
+static void RedSliderMoved ( Widget    w,
                              XtPointer clientData,
                              XtPointer callData ) 
 {
@@ -362,18 +425,28 @@ static void RedSliderMoved ( Widget    w,
     */
 
     XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );
-
-    color.red   =  cb->value * 256;
-    color.pixel =  pixel;
-    color.flags =  DoRed;
-    XStoreColor ( XtDisplay ( w ), 
-                  DefaultColormapOfScreen ( XtScreen ( w ) ),
-                  &color );
-   /*
-    * Correct the shadow colors.
-    */
-
-    SetShadowColors ( currentToggle );
+    if (visualDepth == 32) {
+        unsigned char r = cb->value ;
+        unsigned char g = (pixel >> 8)  & 0xFF;
+        unsigned char b =  pixel        & 0xFF;
+        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
+        pixel = (r << 16) | (g << 8) | b;
+        //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
+        XmChangeColor(swatch, pixel);
+        alignColors();
+    }
+    if (visualDepth == 8) {
+        color.red   =  cb->value * 256;
+        color.pixel =  pixel;
+        color.flags =  DoRed;
+        XStoreColor ( XtDisplay ( w ),
+                      DefaultColormapOfScreen ( XtScreen ( w ) ),
+                      &color );
+        /*
+         * Correct the shadow colors.
+         */
+        SetShadowColors ( currentToggle );
+    }
 }
                         
 static void BlueSliderMoved ( Widget    w,
@@ -399,20 +472,29 @@ static void BlueSliderMoved ( Widget    w,
     * and change the blue component of the color according to
     * the new value of the blue slider.
     */
-
-    XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );    
-    color.blue  =  cb->value * 256;
-    color.pixel =  pixel;
-    color.flags =  DoBlue;
-
-    XStoreColor ( XtDisplay ( w ), 
-                  DefaultColormapOfScreen ( XtScreen ( w ) ),
-                  &color );
-   /*
-    * Correct the shadow colors.
-    */
-
-     SetShadowColors ( currentToggle );
+    XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );
+    if (visualDepth == 32) {
+        unsigned char r = (pixel >> 16) & 0xFF;
+        unsigned char g = (pixel >> 8)  & 0xFF;
+        unsigned char b = cb->value ;
+        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
+        pixel = (r << 16) | (g << 8) | b;
+        //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
+        XmChangeColor(swatch, pixel);
+        alignColors();
+    }
+    if (visualDepth == 8) {
+        color.blue  =  cb->value * 256;
+        color.pixel =  pixel;
+        color.flags =  DoBlue;
+        XStoreColor ( XtDisplay ( w ),
+                      DefaultColormapOfScreen ( XtScreen ( w ) ),
+                      &color );
+        /*
+         * Correct the shadow colors.
+         */
+        SetShadowColors ( currentToggle );
+    }
 }
                         
 static void GreenSliderMoved ( Widget    w, 
@@ -438,20 +520,30 @@ static void GreenSliderMoved ( Widget    w,
     * and change the greem component of the color according to
     * the new value of the green slider.
     */
+    XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );
+    if (visualDepth == 32) {
+        unsigned char r = (pixel >> 16) & 0xFF;
+        unsigned char b =  pixel        & 0xFF;
+        unsigned char g = cb->value ;
+        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
+        pixel = (r << 16) | (g << 8) | b;
+        //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
+        XmChangeColor(swatch, pixel);
+        alignColors();
+    }
+    if (visualDepth == 8) {
+        color.green =  cb->value * 256;
+        color.pixel =  pixel;
+        color.flags =  DoGreen;
 
-    XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );    
-    color.green =  cb->value * 256;
-    color.pixel =  pixel;
-    color.flags =  DoGreen;
-
-    XStoreColor ( XtDisplay ( w ), 
-                  DefaultColormapOfScreen ( XtScreen ( w ) ),
-                  &color );
-   /*
-    * Correct the shadow colors.
-    */
-
-    SetShadowColors ( currentToggle );
+        XStoreColor ( XtDisplay ( w ),
+                      DefaultColormapOfScreen ( XtScreen ( w ) ),
+                      &color );
+        /*
+         * Correct the shadow colors.
+         */
+        SetShadowColors ( currentToggle );
+    }
 }
                         
 static void WarnUserNoColor ( Widget parent ) 
@@ -502,12 +594,13 @@ static void SetShadowColors ( Widget w )
    * have to store the colors in the corresponding color cells to
    * display these colors.
    */
-
-   XStoreColor ( XtDisplay ( w ), 
-                 DefaultColormapOfScreen ( XtScreen ( w ) ),
-                 &ts );
-   XStoreColor ( XtDisplay ( w ), 
-                 DefaultColormapOfScreen ( XtScreen ( w ) ),
-                 &bs );
+   if (visualDepth == 8) {
+       XStoreColor ( XtDisplay ( w ),
+                     DefaultColormapOfScreen ( XtScreen ( w ) ),
+                     &ts );
+       XStoreColor ( XtDisplay ( w ),
+                     DefaultColormapOfScreen ( XtScreen ( w ) ),
+                     &bs );
+   }
 }
                                         
