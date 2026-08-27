@@ -8,6 +8,25 @@ Original README file: [README](README)
 I went through all files and made minor changes to make the code compile and the examples work
 on a nowadays Linux (2026, Opensuse Leap 15.6, gcc 15.2.0)
 
+## Files with more that minor changes
+coloredit and fractal2 were reworked to work on TrueColor displays too.
+
+## Nice screendumps
+ch9/coloredit and ch13/fractal + ch13/fractal2 running on OpenBSD 7.8 o a Sun Blade 100:
+
+![2026-08-27-193340_1280x1024_scrot.png](ch13/2026-08-27-193340_1280x1024_scrot.png)
+
+ch13/fractal2 running on OpenSuse Leap 16 in Truecolor. Algorithm for color selection is different then
+in original code:
+![fractal2-linux-truecolor.png](ch13/fractal2-linux-truecolor.png)
+
+coloredit app OpenSuse Leap 16 in Truecolor:
+
+![coloredit-linux-truecolor.png](ch9/coloredit-linux-truecolor.png)
+
+coloredit app running on OpenBSD 7.8 o a Sun Blade 100:
+See complete screendump above.
+
 ## Issues
 None
 
@@ -20,7 +39,6 @@ None
 // _XmMoveObject is gone in 2.1, use XmeConfigureObject(), but API differs - needs analysis
 _XmMoveObject ( w, tree_const->tree.x, tree_const->tree.y );
 ```
- 
 
 ## Issue _XmMoveObject() function removed in Motif 2.x
 Info on _Xm..() and Xme...() functions from https://linux.die.net/man/3/lesstifinternals:
