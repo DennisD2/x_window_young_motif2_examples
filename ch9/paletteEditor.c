@@ -517,7 +517,7 @@ static void GreenSliderMoved ( Widget    w,
  
    /*
     * Retrieve the background pixel of the swatch widget
-    * and change the greem component of the color according to
+    * and change the green component of the color according to
     * the new value of the green slider.
     */
     XtVaGetValues ( swatch, XmNbackground, &pixel, NULL );
