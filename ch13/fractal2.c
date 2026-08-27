@@ -27,6 +27,7 @@
 #include "MenuSupport.h"
 #include "fractal.h"
 #include <math.h>
+#include <stdio.h>
 
 extern void ShowPreferences ( Widget parent, ImageData *data );
 extern void UpdatePreferences ( ImageData *data );
@@ -335,8 +336,7 @@ static void QuitCallback ( Widget    w,
     exit ( 0 );
 }
     
-void CreateImage ( ImageData *data ) 
-{
+void CreateImage ( ImageData *data ) {
     Widget w = data->canvas;
     int  x, y, iteration;
 
@@ -344,99 +344,89 @@ void CreateImage ( ImageData *data )
     * If the canvas is realized, erase it.
     */
 
-    if ( XtIsRealized ( w ) ) 
-        XClearArea ( XtDisplay ( w ), XtWindow ( w ), 
-                     0, 0, 0, 0, TRUE );
+    if ( XtIsRealized ( w ) )
+        XClearArea ( XtDisplay ( w ), XtWindow ( w ), 0, 0, 0, 0, TRUE );
 
    /*
     * Erase the pixmap by filling it with black.
     */
 
-    XSetForeground ( XtDisplay ( w ), data->gc,
-                     BlackPixelOfScreen ( XtScreen ( w ) ) );
-  
-    XFillRectangle ( XtDisplay ( w ), data->pixmap, data->gc, 0, 0, 
+    XSetForeground ( XtDisplay ( w ), data->gc, BlackPixelOfScreen ( XtScreen ( w ) ) );
+
+    XFillRectangle ( XtDisplay ( w ), data->pixmap, data->gc, 0, 0,
                      data->width,  data->height );
-    
+
    /*
     * For each pixel on the window....
     */
-    
-    for ( y = 0; y < data->height; y++ ) 
-    {
+
+    for ( y = 0; y < data->height; y++ ) {
         ComplexNumber z, k;
-            
-        for ( x = 0; x < data->width; x++ ) 
-        {
+
+        for ( x = 0; x < data->width; x++ ) {
            /*
             * Initialize K to the normalized, floating coordinate
             * in the x, y plane. Init Z to ( 0.0, 0.0 ) .
             */
-            
+
             z.real =  z.imag = 0.0;
-            
-            k.real =  data->origin.real + 
-                ( double ) x / ( double ) data->width * data->range;
-            k.imag =  data->origin.imag - 
-                ( double ) y / ( double ) data->height * data->range;
+
+            k.real =  data->origin.real + ( double ) x / ( double ) data->width * data->range;
+            k.imag =  data->origin.imag - ( double ) y / ( double ) data->height * data->range;
 
            /*
             * Calculate z =  z * z + k over and over.
             */
-            
-              for ( iteration = 0; iteration < data->depth; iteration++)
-            {
+
+              for ( iteration = 0; iteration < data->depth; iteration++) {
                 double   real;
                 int      distance;
-                
+
                 real   = z.real;
                 z.real = z.real * z.real - z.imag * z.imag + k.real;
                 z.imag = 2 * real * z.imag + k.imag;
 
-                distance  =  ( int ) ( z.real * z.real + 
-                                       z.imag * z.imag );
-                
+                distance  =  ( int ) ( z.real * z.real + z.imag * z.imag );
+
                /*
-                * If the z point has moved off the plane, set the 
-                * current foreground color to the distance (cast to 
+                * If the z point has moved off the plane, set the
+                * current foreground color to the distance (cast to
                 * an int and modulo the number of colors available),
                 * and draw a point in the window and the pixmap.
                 */
-                
-                if ( distance  >= data->maxDistance ) 
-                {
-                    Pixel color;
-                    int index;
+                Pixel color;
+                if ( distance  >= data->maxDistance ) {
+		            if (data->vDepth==8) {
+		                if ( data->coloration == DISTANCE )
+		                    color = ( Pixel ) ( distance % data->ncolors );
+		                else if ( data->coloration == ITERATIONS )
+		                    color = ( Pixel ) iteration % data->ncolors;
+		            } else {
+		               int index;
+                       if ( data->coloration == DISTANCE )
+                           index = distance % data->ncolors;
+		               else if ( data->coloration == ITERATIONS )
+		                   index = iteration % data->ncolors;
 
-                    if ( data->coloration == DISTANCE )
-                        index = distance % data->ncolors;
-                    else if ( data->coloration == ITERATIONS )
-                        index = iteration % data->ncolors;
+		               double frequency = 0.2; // 0.1 , Erhöhe auf 0.2 für noch mehr Farbumschläge
 
-                    double frequency = 0.2; // 0.1 , Erhöhe auf 0.2 für noch mehr Farbumschläge
+		               // Sinus-Wellen für maximale Farbvarianz (Werte von 0 bis 255)
+		               unsigned char r = (unsigned char)(128 + 127 * sin(frequency * index + 0.0));
+		               unsigned char g = (unsigned char)(128 + 127 * sin(frequency * index + 2.1));
+		               unsigned char b = (unsigned char)(128 + 127 * sin(frequency * index + 4.2));
+		               // TrueColor 24-Bit Wert zusammensetzen
+		               color = (r << 16) | (g << 8) | b;
+		            }
+                    XSetForeground ( XtDisplay ( w ), data->gc, color );
 
-                    // Sinus-Wellen für maximale Farbvarianz (Werte von 0 bis 255)
-                    unsigned char r = (unsigned char)(128 + 127 * sin(frequency * index + 0.0));
-                    unsigned char g = (unsigned char)(128 + 127 * sin(frequency * index + 2.1));
-                    unsigned char b = (unsigned char)(128 + 127 * sin(frequency * index + 4.2));
-                    // TrueColor 24-Bit Wert zusammensetzen
-                    color = (r << 16) | (g << 8) | b;
-
-                    XSetForeground ( XtDisplay ( w ),
-                                     data->gc, color );
-
-                    XDrawPoint ( XtDisplay ( w ),
-                                 data->pixmap,
-                                 data->gc, x, y );
+                    XDrawPoint ( XtDisplay ( w ), data->pixmap, data->gc, x, y );
                     if ( XtIsRealized ( w ) )
-                        XDrawPoint ( XtDisplay ( w ),
-                                     XtWindow ( w ),
-                                     data->gc, x, y );
+                        XDrawPoint ( XtDisplay ( w ), XtWindow ( w ), data->gc, x, y );
                     break;
                 }
+              }
             }
         }
-    }
 }
                                             
 static void RedisplayCallback ( Widget    w, 
@@ -525,22 +515,24 @@ void SetupColorMap ( Widget shell, ImageData *data, Boolean ramp )
     
     if ( !data->cmap ) {
 
-        Boolean visualFound=false;
+        Boolean visualFound=0;
         // try to find a TrueColor visual
         if (XMatchVisualInfo(dpy, screen, 32, TrueColor, &vinfo)) {
             printf("TrueColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
-            visualFound=true;
+            visualFound=1;
         }
         if (!visualFound) {
             if (XMatchVisualInfo(dpy, screen, 8, PseudoColor, &vinfo)) {
                 printf("PseudoColor-Visual found! ID: 0x%lx\n", vinfo.visualid);
-                visualFound=true;
+                visualFound=1;
             } else if (!visualFound) {
                 printf("Neither TrueColor nor PseudoColor visual found. Nutze Standard-Visual.\n");
                 vinfo.visual = DefaultVisual(dpy, screen);
                 vinfo.depth = DefaultDepth(dpy, screen);
             }
         }
+	    data->vDepth=vinfo.depth ;
+	    printf("visual depth value: %d\n", data->vDepth);
 
         if (vinfo.depth == 32) {
             data->cmap = DefaultColormap(dpy, DefaultScreen(dpy));

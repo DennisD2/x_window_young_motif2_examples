@@ -41,6 +41,7 @@ typedef struct {
     ComplexNumber  origin;
     ColorationType coloration;
 
+    int             vDepth;
     Colormap        cmap;
     XColor          *Colors;
 
