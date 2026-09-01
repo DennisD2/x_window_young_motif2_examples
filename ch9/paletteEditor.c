@@ -386,7 +386,10 @@ static void SelectColorCallback ( Widget    w,
     XtVaSetValues ( blueSlider,  XmNvalue, color.blue  / 256,   NULL );
 }
 
-static void alignColors(void) {
+static void alignColors(Pixel pixel) {
+    char color[10];
+    sprintf(color, "%06x", pixel);
+    XmString xmstr = XmStringCreate ( color, XmFONTLIST_DEFAULT_TAG );
     Pixel bg, tsc, bsc;
     XtVaGetValues ( swatch,
                     XmNbackground,        &bg,
@@ -397,7 +400,9 @@ static void alignColors(void) {
                     XmNbackground,        bg,
                     XmNtopShadowColor,    tsc,
                     XmNbottomShadowColor, bsc,
+                    XmNlabelString,    xmstr,
                     NULL );
+    XmStringFree ( xmstr );
 }
 
 static void RedSliderMoved ( Widget    w,
@@ -433,7 +438,7 @@ static void RedSliderMoved ( Widget    w,
         pixel = (r << 16) | (g << 8) | b;
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
-        alignColors();
+        alignColors(pixel);
     }
     if (visualDepth == 8) {
         color.red   =  cb->value * 256;
@@ -481,7 +486,7 @@ static void BlueSliderMoved ( Widget    w,
         pixel = (r << 16) | (g << 8) | b;
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
-        alignColors();
+        alignColors(pixel);
     }
     if (visualDepth == 8) {
         color.blue  =  cb->value * 256;
@@ -529,7 +534,7 @@ static void GreenSliderMoved ( Widget    w,
         pixel = (r << 16) | (g << 8) | b;
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
-        alignColors();
+        alignColors(pixel);
     }
     if (visualDepth == 8) {
         color.green =  cb->value * 256;
