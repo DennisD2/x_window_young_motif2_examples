@@ -280,9 +280,8 @@ static Widget CreateColorSelector ( Widget parent, int ncolors )
         Widget toggle;
         char   name[10];
 
-        sprintf ( name,"%d", pixels[i] );
-
         if (visualDepth == 8) {
+            sprintf ( name,"%d", pixels[i] );
             toggle   =
                 XtVaCreateManagedWidget ( name,
                                       xmToggleButtonWidgetClass, panel,
@@ -303,7 +302,8 @@ static Widget CreateColorSelector ( Widget parent, int ncolors )
             int g = random() % 256;
             int b = random() % 256;
             Pixel pixel = (r << 16) | (g << 8) | b;
-            printf("r=%d g=%d b=%d\n",r,g,b);
+            sprintf(name,"%06x",pixel);
+            printf("color=%s\n",name);
             toggle   =
                 XtVaCreateManagedWidget ( name,
                                       xmToggleButtonWidgetClass, panel,
