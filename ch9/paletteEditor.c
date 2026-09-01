@@ -434,8 +434,8 @@ static void RedSliderMoved ( Widget    w,
         unsigned char r = cb->value ;
         unsigned char g = (pixel >> 8)  & 0xFF;
         unsigned char b =  pixel        & 0xFF;
-        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
         pixel = (r << 16) | (g << 8) | b;
+        printf("r=%d, g=%d, b=%d (cb=%d) color=0x%06x\n", r,g,b, cb->value, pixel );
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
         alignColors(pixel);
@@ -482,8 +482,8 @@ static void BlueSliderMoved ( Widget    w,
         unsigned char r = (pixel >> 16) & 0xFF;
         unsigned char g = (pixel >> 8)  & 0xFF;
         unsigned char b = cb->value ;
-        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
         pixel = (r << 16) | (g << 8) | b;
+        printf("r=%d, g=%d, b=%d (cb=%d) color=0x%06x\n", r,g,b, cb->value, pixel );
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
         alignColors(pixel);
@@ -519,7 +519,7 @@ static void GreenSliderMoved ( Widget    w,
       WarnUserNoColor ( w );
       return;
     }
- 
+
    /*
     * Retrieve the background pixel of the swatch widget
     * and change the green component of the color according to
@@ -530,8 +530,8 @@ static void GreenSliderMoved ( Widget    w,
         unsigned char r = (pixel >> 16) & 0xFF;
         unsigned char b =  pixel        & 0xFF;
         unsigned char g = cb->value ;
-        printf("r=%d, g=%d, b=%d (cb=%d)\n", r,g,b, cb->value );
         pixel = (r << 16) | (g << 8) | b;
+        printf("r=%d, g=%d, b=%d (cb=%d) color=0x%06x\n", r,g,b, cb->value, pixel );
         //XtVaSetValues ( swatch, XmNbackground, pixel, NULL );
         XmChangeColor(swatch, pixel);
         alignColors(pixel);
