@@ -11,7 +11,7 @@ CFLAGS = $(DEBUG)
 #LIBS =   -L../lib -lXs -lXpm -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  
 #if sgi use
 LIBS =  -L../lib -lXs -lXpm -lXm -lXt -lX11 #-lPW
-LIBSPNG =  -L../lib -lXs -lXpm -lXm -lXt -lX11 -lpng -lz
+LIBSPNG =  -L../lib -lXs -lXpm -lXm -lXt -lX11 -lXext -lpng -lz
 
 
 TARGETS=xlogo xlogo2 xlogo3 xpmlogo xpmlogo2 pixmaps
