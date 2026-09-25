@@ -54,6 +54,10 @@ Widget CreateXlogoButton(Widget parent)
                 XmNcolormap, &attributes.colormap,
                 XmNbackground, &bg_color,
                 NULL);
+    unsigned char bg_r = (bg_color >> 16) & 0xFF;
+    unsigned char bg_g = (bg_color >> 8)  & 0xFF;
+    unsigned char bg_b =  bg_color        & 0xFF;
+
     /*
      * Specify the visual to be used and set the XpmAttributes mask.
      */
@@ -119,19 +123,18 @@ Widget CreateXlogoButton(Widget parent)
 
             xpm_data[1 + color_index] = malloc(30);
 
-            //
-            if (r==0 && g==0 && b==0) {
-                r = (bg_color >> 16)  & 0xFF;
-                g = (bg_color >> 8)  & 0xFF;
-                b =  bg_color        & 0xFF;
-                printf("T %x (%x %x %x)\n", px[3], r, g, b);
+            // get alpha value (if available) and normalize 0.0..1,0
+            float alpha = (channels == 4) ? (px[3] / 255.0f) : 1.0f;
 
-                //sprintf(xpm_data[1 + color_index], "%s c None", token);
-                sprintf(xpm_data[1 + color_index], "%s c #%02X%02X%02X", token, r,g,b);
-            } else {
-                printf("%x (%x %x %x)\n", px[3], r, g, b);
-                sprintf(xpm_data[1 + color_index], "%s c #%02X%02X%02X", token, r, g, b);
-            }
+            // alpha = 0 -> draw background
+            // alpha = 1 -> draw pixel
+            // alpha in between: mix in some transparency
+            unsigned char final_r = (unsigned char)(r * alpha + bg_r * (1.0f - alpha));
+            unsigned char final_g = (unsigned char)(g * alpha + bg_g * (1.0f - alpha));
+            unsigned char final_b = (unsigned char)(b * alpha + bg_b * (1.0f - alpha));
+
+            xpm_data[1 + color_index] = malloc(30);
+            sprintf(xpm_data[1 + color_index], "%s c #%02X%02X%02X", token, final_r, final_g, final_b);
 
             // add token
             strcat(xpm_data[1 + num_colors + y], token);
@@ -158,18 +161,6 @@ Widget CreateXlogoButton(Widget parent)
                       XmNlabelPixmap, pix,
                       NULL);
 
-        // Wenn GIMP-Transparenz vorhanden ist, schneiden wir das Widget-Fenster passend zu
-        if (mask != None) {
-            // Wichtig: Wir müssen warten, bis das Widget ein X-Window besitzt (Realize)
-            XtRealizeWidget(button);
-
-            // Die Maske direkt auf das Window des Buttons anwenden
-            XShapeCombineMask(dpy, XtWindow(button), ShapeBounding,
-                              0, 0, mask, ShapeSet);
-
-            // Die Maske kann danach freigegeben werden
-            XFreePixmap(dpy, mask);
-        }
     } else {
         fprintf(stderr, "XPM-Fehler: Pixmap konnte nicht erstellt werden (%d).\n", status);
     }
