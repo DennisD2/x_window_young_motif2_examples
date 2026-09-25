@@ -65,6 +65,7 @@ Widget CreateXlogoButton(Widget parent)
 
     // 2.Open PNG file
     FILE *fp = fopen("grand_ca.jpg.png", "rb");
+    //FILE *fp = fopen("moon.png", "rb");
     if (!fp) {
         fprintf(stderr, "Error opening file\n");
         return button;
@@ -96,15 +97,20 @@ Widget CreateXlogoButton(Widget parent)
     int xpm_lines = 1 + num_colors + height;
     char **xpm_data = malloc(xpm_lines * sizeof(char *));
 
+    int tokenSize = 4;
+    if (num_colors > 456976 /* 29^4 */) {
+        tokenSize=5;
+    }
+    printf("Token size: %d\n", tokenSize);
 
     // write header line
     xpm_data[0] = malloc(50);
-    sprintf(xpm_data[0], "%d %d %d 5", width, height, num_colors);
+    sprintf(xpm_data[0], "%d %d %d %d", width, height, num_colors, tokenSize);
 
     // create color palette and pixel array
     int color_index = 0;
     for (int y = 0; y < height; y++) {
-        xpm_data[1 + num_colors + y] = malloc(width * 5 + 1);
+        xpm_data[1 + num_colors + y] = malloc(width * tokenSize + 1);
         xpm_data[1 + num_colors + y][0] = '\0';
 
         for (int x = 0; x < width; x++) {
@@ -115,12 +121,20 @@ Widget CreateXlogoButton(Widget parent)
 
             // create char token for xpm
             char token[10];
-            sprintf(token, "%c%c%c%c%c",
-                    'a' + (color_index / 456976) % 26,
+            if (tokenSize == 5) {
+                sprintf(token, "%c%c%c%c%c",
+                        'a' + (color_index / 456976) % 26,
+                        'a' + (color_index / 17576) % 26,
+                        'a' + (color_index / 676) % 26,
+                        'a' + (color_index / 26) % 26,
+                        'a' + color_index % 26);
+            } else if (tokenSize == 4) {
+                sprintf(token, "%c%c%c%c",
                     'a' + (color_index / 17576) % 26,
                     'a' + (color_index / 676) % 26,
                     'a' + (color_index / 26) % 26,
                     'a' + color_index % 26);
+            }
 
             xpm_data[1 + color_index] = malloc(50);
 
