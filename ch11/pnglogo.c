@@ -22,7 +22,6 @@
 #include <Xm/PushB.h>
 #include <X11/xpm.h>  /* Non-standard header file */
 
-#include <X11/extensions/shape.h>
 #include "png.h"
 #include "zlib.h"
 #include "stdlib.h"
