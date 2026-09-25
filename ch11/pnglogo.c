@@ -96,14 +96,15 @@ Widget CreateXlogoButton(Widget parent)
     int xpm_lines = 1 + num_colors + height;
     char **xpm_data = malloc(xpm_lines * sizeof(char *));
 
+
     // write header line
-    xpm_data[0] = malloc(100);
+    xpm_data[0] = malloc(50);
     sprintf(xpm_data[0], "%d %d %d 5", width, height, num_colors);
 
     // create color palette and pixel array
     int color_index = 0;
     for (int y = 0; y < height; y++) {
-        xpm_data[1 + num_colors + y] = malloc(width * 4 + 1);
+        xpm_data[1 + num_colors + y] = malloc(width * 5 + 1);
         xpm_data[1 + num_colors + y][0] = '\0';
 
         for (int x = 0; x < width; x++) {
@@ -113,7 +114,7 @@ Widget CreateXlogoButton(Widget parent)
             unsigned char b = px[2];
 
             // create char token for xpm
-            char token[12];
+            char token[10];
             sprintf(token, "%c%c%c%c%c",
                     'a' + (color_index / 456976) % 26,
                     'a' + (color_index / 17576) % 26,
@@ -121,7 +122,7 @@ Widget CreateXlogoButton(Widget parent)
                     'a' + (color_index / 26) % 26,
                     'a' + color_index % 26);
 
-            xpm_data[1 + color_index] = malloc(100);
+            xpm_data[1 + color_index] = malloc(50);
 
             // get alpha value (if available) and normalize 0.0..1,0
             float alpha = (channels == 4) ? (px[3] / 255.0f) : 1.0f;
@@ -146,11 +147,9 @@ Widget CreateXlogoButton(Widget parent)
                                      xpm_data, &pix, &mask, &attributes);
 
     // cleanup
-   /* for (int i = 0; i < xpm_lines; i++) {
-        if (xpm_data[i] != NULL) {
-            free(xpm_data[i]);
-        }
-    }*/
+    for (int i = 0; i < xpm_lines; i++) {
+       free(xpm_data[i]);
+    }
     free(xpm_data);
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     fclose(fp);
