@@ -133,7 +133,6 @@ Widget CreateXlogoButton(Widget parent)
             unsigned char final_g = (unsigned char)(g * alpha + bg_g * (1.0f - alpha));
             unsigned char final_b = (unsigned char)(b * alpha + bg_b * (1.0f - alpha));
 
-            xpm_data[1 + color_index] = malloc(30);
             sprintf(xpm_data[1 + color_index], "%s c #%02X%02X%02X", token, final_r, final_g, final_b);
 
             // add token
