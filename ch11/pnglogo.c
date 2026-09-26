@@ -26,7 +26,7 @@
 #include "zlib.h"
 #include "stdlib.h"
 
-Widget CreateXlogoButton ( Widget parent );  
+Widget CreateXlogoButton ( Widget parent, char *pngFile);
 
 void readpng_version_info() {
     fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n",
@@ -35,7 +35,7 @@ void readpng_version_info() {
       ZLIB_VERSION, zlib_version);
 }
 
-Widget CreateXlogoButton(Widget parent)
+Widget CreateXlogoButton(Widget parent, char *pngFile)
 {
     Widget button;
     Pixmap pix = None;
@@ -64,8 +64,7 @@ Widget CreateXlogoButton(Widget parent)
     attributes.valuemask = XpmDepth | XpmColormap | XpmVisual;
 
     // 2.Open PNG file
-    FILE *fp = fopen("grand_ca.jpg.png", "rb");
-    //FILE *fp = fopen("moon.png", "rb");
+    FILE *fp = fopen(pngFile, "rb");
     if (!fp) {
         fprintf(stderr, "Error opening file\n");
         return button;
@@ -187,12 +186,17 @@ void main ( int argc, char **argv )
     Widget       shell, button;
     XtAppContext app;
 
+    char *pngFile = "moon.png";
+    if (argc == 2) {
+        pngFile = argv[1];
+    }
+
     readpng_version_info();
 
     shell = XtAppInitialize ( &app, "XPmlogo", NULL, 0,
                               &argc, argv, NULL, NULL, 0  );
 
-    button = CreateXlogoButton( shell );
+    button = CreateXlogoButton( shell, pngFile );
 
     XtRealizeWidget ( shell );
     XtAppMainLoop ( app );
