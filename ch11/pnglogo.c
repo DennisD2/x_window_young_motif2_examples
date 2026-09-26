@@ -1,23 +1,8 @@
 /********************************************************************
- *         This example code is from the book:
- *
- *           The X Window System: Programming and Applications with Xt
- *           Second OSF/Motif Edition
- *         by
- *           Douglas Young
- *           Prentice Hall, 1994
- *
- *         Copyright 1994 by Prentice Hall
- *         All Rights Reserved
- *
- *  Permission to use, copy, modify, and distribute this software for 
- *  any purpose except publication and without fee is hereby granted, provided 
- *  that the above copyright notice appear in all copies of the software.
- * *****************************************************************************/
+ * This example shows how to load a ONG and use it as a pixmap
+ * Uses libpng .
+ * ******************************************************************/
 
-/**************************************************
- * xpmlogo.c: Display the X Logo using Xpm format
- **************************************************/
 #include <Xm/Xm.h>
 #include <Xm/PushB.h>
 #include <X11/xpm.h>  /* Non-standard header file */
@@ -63,14 +48,14 @@ Widget CreateXlogoButton(Widget parent, char *pngFile)
     attributes.visual = DefaultVisual ( dpy, DefaultScreen ( dpy ) );
     attributes.valuemask = XpmDepth | XpmColormap | XpmVisual;
 
-    // 2.Open PNG file
+    // Open PNG file
     FILE *fp = fopen(pngFile, "rb");
     if (!fp) {
         fprintf(stderr, "Error opening file\n");
         return button;
     }
 
-    // 3. initialize libpng
+    // Initialize libpng
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png_ptr) { fclose(fp); return button; }
 
