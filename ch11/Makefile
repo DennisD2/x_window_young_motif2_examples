@@ -11,8 +11,6 @@ CFLAGS = $(DEBUG)
 #LIBS =   -L../lib -lXs -lXpm -L/usr/lib/Motif1.2 -L/usr/lib/X11R5  -lXm -lXt -lX11 -lPW  
 #if sgi use
 LIBS =  -L../lib -lXs -lXpm -lXm -lXt -lX11 #-lPW
-LIBSPNG =  -L../lib -lXs -lXpm -lXm -lXt -lX11 -lpng -lz
-
 
 TARGETS=xlogo xlogo2 xlogo3 xpmlogo xpmlogo2 pixmaps
 
@@ -31,8 +29,6 @@ xpmlogo: xpmlogo.o
 	$(CC) $(CFLAGS) -o $@  $@.o  $(LIBS)
 xpmlogo2: xpmlogo2.o
 	$(CC) $(CFLAGS) -o $@  $@.o  $(LIBS)
-pnglogo: pnglogo.o
-	$(CC) $(CFLAGS) -o $@  $@.o  $(LIBSPNG)
 
 pixmaps: pixmapbrowser.o browser.o
 	$(CC) $(CFLAGS) -o $@  pixmapbrowser.o browser.o  $(LIBS)
